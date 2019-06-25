@@ -1,0 +1,33 @@
+# /etc/conf.d/cryptotalkcoind: config file for /etc/init.d/cryptotalkcoind
+
+# Config file location
+#CRYPTOTALKCOIND_CONFIGFILE="/etc/cryptotalkcoin/cryptotalkcoin.conf"
+
+# What directory to write pidfile to?  (created and owned by $CRYPTOTALKCOIND_USER)
+#CRYPTOTALKCOIND_PIDDIR="/var/run/cryptotalkcoind"
+
+# What filename to give the pidfile
+#CRYPTOTALKCOIND_PIDFILE="${CRYPTOTALKCOIND_PIDDIR}/cryptotalkcoind.pid"
+
+# Where to write cryptotalkcoind data (be mindful that the blockchain is large)
+#CRYPTOTALKCOIND_DATADIR="/var/lib/cryptotalkcoind"
+
+# User and group to own cryptotalkcoind process
+#CRYPTOTALKCOIND_USER="cryptotalkcoin"
+#CRYPTOTALKCOIND_GROUP="cryptotalkcoin"
+
+# Path to cryptotalkcoind executable
+#CRYPTOTALKCOIND_BIN="/usr/bin/cryptotalkcoind"
+
+# Nice value to run cryptotalkcoind under
+#CRYPTOTALKCOIND_NICE=0
+
+# Additional options (avoid -conf and -datadir, use flags above)
+#CRYPTOTALKCOIND_OPTS=""
+
+# The timeout in seconds OpenRC will wait for cryptotalkcoind to terminate
+# after a SIGTERM has been raised.
+# Note that this will be mapped as argument to start-stop-daemon's
+# '--retry' option, which means you can specify a retry schedule
+# here. For more information see man 8 start-stop-daemon.
+CRYPTOTALKCOIND_SIGTERM_TIMEOUT=60

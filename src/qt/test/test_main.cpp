@@ -1,19 +1,19 @@
-// Copyright (c) 2009-2018 The Bitcoin Core developers
+// Copyright (c) 2009-2018 The Cryptotalkcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #if defined(HAVE_CONFIG_H)
-#include <config/bitcoin-config.h>
+#include <config/cryptotalkcoin-config.h>
 #endif
 
 #include <chainparams.h>
 #include <interfaces/node.h>
-#include <qt/bitcoin.h>
+#include <qt/cryptotalkcoin.h>
 #include <qt/test/apptests.h>
 #include <qt/test/rpcnestedtests.h>
+#include <util/system.h>
 #include <qt/test/uritests.h>
 #include <qt/test/compattests.h>
-#include <test/setup_common.h>
 
 #ifdef ENABLE_WALLET
 #include <qt/test/addressbooktests.h>
@@ -48,8 +48,14 @@ extern void noui_connect();
 // This is all you need to run all the tests
 int main(int argc, char *argv[])
 {
-    BasicTestingSetup test{CBaseChainParams::REGTEST};
-
+    SetupEnvironment();
+    SetupNetworking();
+    SelectParams(CBaseChainParams::REGTEST);
+    noui_connect();
+    ClearDatadirCache();
+    fs::path pathTemp = fs::temp_directory_path() / strprintf("test_cryptotalkcoin-qt_%lu_%i", (unsigned long)GetTime(), (int)GetRand(100000));
+    fs::create_directories(pathTemp);
+    gArgs.ForceSetArg("-datadir", pathTemp.string());
     auto node = interfaces::MakeNode();
 
     bool fInvalid = false;
@@ -65,8 +71,8 @@ int main(int argc, char *argv[])
 
     // Don't remove this, it's needed to access
     // QApplication:: and QCoreApplication:: in the tests
-    BitcoinApplication app(*node, argc, argv);
-    app.setApplicationName("Bitcoin-Qt-test");
+    CryptotalkcoinApplication app(*node, argc, argv);
+    app.setApplicationName("Cryptotalkcoin-Qt-test");
 
     SSL_library_init();
 
@@ -102,6 +108,8 @@ int main(int argc, char *argv[])
         fInvalid = true;
     }
 #endif
+
+    fs::remove_all(pathTemp);
 
     return fInvalid;
 }

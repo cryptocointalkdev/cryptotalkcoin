@@ -1,4 +1,4 @@
-// Copyright (c) 2017-2019 The Bitcoin Core developers
+// Copyright (c) 2017-2019 The Cryptotalkcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -134,6 +134,7 @@ BOOST_AUTO_TEST_CASE(bnb_search_test)
     /////////////////////////
     // Known Outcome tests //
     /////////////////////////
+    BOOST_TEST_MESSAGE("Testing known outcomes");
 
     // Empty utxo pool
     BOOST_CHECK(!SelectCoinsBnB(GroupCoins(utxo_pool), 1 * CENT, 0.5 * CENT, selection, value_ret, not_input_fees));
@@ -377,12 +378,20 @@ BOOST_AUTO_TEST_CASE(knapsack_solver_test)
         add_coin( 3*COIN);
         add_coin( 4*COIN); // now we have 5+6+7+8+18+20+30+100+200+300+400 = 1094 cents
         BOOST_CHECK( testWallet.SelectCoinsMinConf(95 * CENT, filter_confirmed, GroupCoins(vCoins), setCoinsRet, nValueRet, coin_selection_params, bnb_used));
-        BOOST_CHECK_EQUAL(nValueRet, 1 * COIN);  // we should get 1 BTC in 1 coin
+        BOOST_CHECK_EQUAL(nValueRet, 1 * COIN);  // we should get 1 CRT in 1 coin
         BOOST_CHECK_EQUAL(setCoinsRet.size(), 1U);
 
         BOOST_CHECK( testWallet.SelectCoinsMinConf(195 * CENT, filter_confirmed, GroupCoins(vCoins), setCoinsRet, nValueRet, coin_selection_params, bnb_used));
-        BOOST_CHECK_EQUAL(nValueRet, 2 * COIN);  // we should get 2 BTC in 1 coin
+        BOOST_CHECK_EQUAL(nValueRet, 2 * COIN);  // we should get 2 CRT in 1 coin
         BOOST_CHECK_EQUAL(setCoinsRet.size(), 1U);
+
+        // empty the wallet and start again, now with fractions of a cent, to test small change avoidance
+        empty_wallet();
+        add_coin(10, 6*24, false, 0);
+
+        // coins with equal or bigger time than txTime could not be selected
+        BOOST_CHECK(!testWallet.SelectCoinsMinConf(5*CENT, filter_confirmed, GroupCoins(vCoins), setCoinsRet, nValueRet, coin_selection_params, bnb_used));
+        BOOST_CHECK(!testWallet.SelectCoinsMinConf(5*CENT + GetRandInt(100) + 1, filter_confirmed, GroupCoins(vCoins), setCoinsRet, nValueRet, coin_selection_params, bnb_used));
 
         // empty the wallet and start again, now with fractions of a cent, to test small change avoidance
 

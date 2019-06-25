@@ -1,10 +1,10 @@
 // Copyright (c) 2010 Satoshi Nakamoto
-// Copyright (c) 2012-2018 The Bitcoin Core developers
+// Copyright (c) 2012-2018 The Cryptotalkcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef BITCOIN_UI_INTERFACE_H
-#define BITCOIN_UI_INTERFACE_H
+#ifndef CRYPTOTALKCOIN_UI_INTERFACE_H
+#define CRYPTOTALKCOIN_UI_INTERFACE_H
 
 #include <functional>
 #include <memory>
@@ -69,9 +69,6 @@ public:
         /** Force blocking, modal message box dialog (not just OS notification) */
         MODAL               = 0x10000000U,
 
-        /** Do not prepend error/warning prefix */
-        MSG_NOPREFIX        = 0x20000000U,
-
         /** Do not print contents of message to debug log */
         SECURE              = 0x40000000U,
 
@@ -133,4 +130,4 @@ bool InitError(const std::string& str);
 
 extern CClientUIInterface uiInterface;
 
-#endif // BITCOIN_UI_INTERFACE_H
+#endif // CRYPTOTALKCOIN_UI_INTERFACE_H

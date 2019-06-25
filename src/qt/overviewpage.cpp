@@ -1,11 +1,11 @@
-// Copyright (c) 2011-2018 The Bitcoin Core developers
+// Copyright (c) 2011-2018 The Cryptotalkcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #include <qt/overviewpage.h>
 #include <qt/forms/ui_overviewpage.h>
 
-#include <qt/bitcoinunits.h>
+#include <qt/cryptotalkcoinunits.h>
 #include <qt/clientmodel.h>
 #include <qt/guiconstants.h>
 #include <qt/guiutil.h>
@@ -28,7 +28,7 @@ class TxViewDelegate : public QAbstractItemDelegate
     Q_OBJECT
 public:
     explicit TxViewDelegate(const PlatformStyle *_platformStyle, QObject *parent=nullptr):
-        QAbstractItemDelegate(parent), unit(BitcoinUnits::BTC),
+        QAbstractItemDelegate(parent), unit(CryptotalkcoinUnits::CRT),
         platformStyle(_platformStyle)
     {
 
@@ -86,7 +86,7 @@ public:
             foreground = option.palette.color(QPalette::Text);
         }
         painter->setPen(foreground);
-        QString amountText = BitcoinUnits::formatWithUnit(unit, amount, true, BitcoinUnits::separatorAlways);
+        QString amountText = CryptotalkcoinUnits::formatWithUnit(unit, amount, true, CryptotalkcoinUnits::separatorAlways);
         if(!confirmed)
         {
             amountText = QString("[") + amountText + QString("]");
@@ -162,19 +162,19 @@ void OverviewPage::setBalance(const interfaces::WalletBalances& balances)
     int unit = walletModel->getOptionsModel()->getDisplayUnit();
     m_balances = balances;
     if (walletModel->privateKeysDisabled()) {
-        ui->labelBalance->setText(BitcoinUnits::formatWithUnit(unit, balances.watch_only_balance, false, BitcoinUnits::separatorAlways));
-        ui->labelUnconfirmed->setText(BitcoinUnits::formatWithUnit(unit, balances.unconfirmed_watch_only_balance, false, BitcoinUnits::separatorAlways));
-        ui->labelImmature->setText(BitcoinUnits::formatWithUnit(unit, balances.immature_watch_only_balance, false, BitcoinUnits::separatorAlways));
-        ui->labelTotal->setText(BitcoinUnits::formatWithUnit(unit, balances.watch_only_balance + balances.unconfirmed_watch_only_balance + balances.immature_watch_only_balance, false, BitcoinUnits::separatorAlways));
+        ui->labelBalance->setText(CryptotalkcoinUnits::formatWithUnit(unit, balances.watch_only_balance, false, CryptotalkcoinUnits::separatorAlways));
+        ui->labelUnconfirmed->setText(CryptotalkcoinUnits::formatWithUnit(unit, balances.unconfirmed_watch_only_balance, false, CryptotalkcoinUnits::separatorAlways));
+        ui->labelImmature->setText(CryptotalkcoinUnits::formatWithUnit(unit, balances.immature_watch_only_balance, false, CryptotalkcoinUnits::separatorAlways));
+        ui->labelTotal->setText(CryptotalkcoinUnits::formatWithUnit(unit, balances.watch_only_balance + balances.unconfirmed_watch_only_balance + balances.immature_watch_only_balance, false, CryptotalkcoinUnits::separatorAlways));
     } else {
-        ui->labelBalance->setText(BitcoinUnits::formatWithUnit(unit, balances.balance, false, BitcoinUnits::separatorAlways));
-        ui->labelUnconfirmed->setText(BitcoinUnits::formatWithUnit(unit, balances.unconfirmed_balance, false, BitcoinUnits::separatorAlways));
-        ui->labelImmature->setText(BitcoinUnits::formatWithUnit(unit, balances.immature_balance, false, BitcoinUnits::separatorAlways));
-        ui->labelTotal->setText(BitcoinUnits::formatWithUnit(unit, balances.balance + balances.unconfirmed_balance + balances.immature_balance, false, BitcoinUnits::separatorAlways));
-        ui->labelWatchAvailable->setText(BitcoinUnits::formatWithUnit(unit, balances.watch_only_balance, false, BitcoinUnits::separatorAlways));
-        ui->labelWatchPending->setText(BitcoinUnits::formatWithUnit(unit, balances.unconfirmed_watch_only_balance, false, BitcoinUnits::separatorAlways));
-        ui->labelWatchImmature->setText(BitcoinUnits::formatWithUnit(unit, balances.immature_watch_only_balance, false, BitcoinUnits::separatorAlways));
-        ui->labelWatchTotal->setText(BitcoinUnits::formatWithUnit(unit, balances.watch_only_balance + balances.unconfirmed_watch_only_balance + balances.immature_watch_only_balance, false, BitcoinUnits::separatorAlways));
+        ui->labelBalance->setText(CryptotalkcoinUnits::formatWithUnit(unit, balances.balance, false, CryptotalkcoinUnits::separatorAlways));
+        ui->labelUnconfirmed->setText(CryptotalkcoinUnits::formatWithUnit(unit, balances.unconfirmed_balance, false, CryptotalkcoinUnits::separatorAlways));
+        ui->labelImmature->setText(CryptotalkcoinUnits::formatWithUnit(unit, balances.immature_balance, false, CryptotalkcoinUnits::separatorAlways));
+        ui->labelTotal->setText(CryptotalkcoinUnits::formatWithUnit(unit, balances.balance + balances.unconfirmed_balance + balances.immature_balance, false, CryptotalkcoinUnits::separatorAlways));
+        ui->labelWatchAvailable->setText(CryptotalkcoinUnits::formatWithUnit(unit, balances.watch_only_balance, false, CryptotalkcoinUnits::separatorAlways));
+        ui->labelWatchPending->setText(CryptotalkcoinUnits::formatWithUnit(unit, balances.unconfirmed_watch_only_balance, false, CryptotalkcoinUnits::separatorAlways));
+        ui->labelWatchImmature->setText(CryptotalkcoinUnits::formatWithUnit(unit, balances.immature_watch_only_balance, false, CryptotalkcoinUnits::separatorAlways));
+        ui->labelWatchTotal->setText(CryptotalkcoinUnits::formatWithUnit(unit, balances.watch_only_balance + balances.unconfirmed_watch_only_balance + balances.immature_watch_only_balance, false, CryptotalkcoinUnits::separatorAlways));
     }
     // only show immature (newly mined) balance if it's non-zero, so as not to complicate things
     // for the non-mining users
@@ -243,7 +243,7 @@ void OverviewPage::setWalletModel(WalletModel *model)
         });
     }
 
-    // update the display unit, to not use the default ("BTC")
+    // update the display unit, to not use the default ("CRT")
     updateDisplayUnit();
 }
 

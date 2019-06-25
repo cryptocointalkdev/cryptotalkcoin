@@ -1,9 +1,9 @@
-// Copyright (c) 2016 The Bitcoin Core developers
+// Copyright (c) 2016 The Cryptotalkcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef BITCOIN_WALLET_WALLETTOOL_H
-#define BITCOIN_WALLET_WALLETTOOL_H
+#ifndef CRYPTOTALKCOIN_WALLET_WALLETTOOL_H
+#define CRYPTOTALKCOIN_WALLET_WALLETTOOL_H
 
 #include <wallet/ismine.h>
 #include <wallet/wallet.h>
@@ -17,4 +17,4 @@ bool ExecuteWalletToolFunc(const std::string& command, const std::string& file);
 
 } // namespace WalletTool
 
-#endif // BITCOIN_WALLET_WALLETTOOL_H
+#endif // CRYPTOTALKCOIN_WALLET_WALLETTOOL_H
