@@ -22,7 +22,7 @@ uint256 CBlockHeader::GetMemHash() const
 {
     return AxiomHash(BEGIN(nVersion), END(nNonce));
 }
-
+#ifdef ENABLE_MOMENTUM_HASH_ALGO
 uint256 CBlockHeader::GetMomentumHash() const
 {
     return Hash(BEGIN(nVersion), END(nBirthdayB));
@@ -70,7 +70,7 @@ uint256 CBlockHeader::CalculateBestBirthdayHash() {
 	} 		
 	return GetHash();
 }
-
+#endif
 uint256 CBlockHeader::GetGroestlHash() const
 {
 	CGroestlHashWriter ss(SER_GETHASH, PROTOCOL_VERSION);
