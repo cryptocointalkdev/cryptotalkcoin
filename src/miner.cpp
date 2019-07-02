@@ -468,7 +468,7 @@ int64_t nHPSTimerStart = 0;
 void static CryptotalkcoinMiner(const CChainParams& chainparams, std::shared_ptr<CReserveScript> coinbase_script)
 {
 	LogPrintf("CryptotalkcoinMiner started\n");
-	SetThreadPriority(THREAD_PRIORITY_LOWEST);
+	//SetThreadPriority(THREAD_PRIORITY_LOWEST);
 	RenameThread("cryptotalkcoin-miner");
 
 	unsigned int nExtraNonce = 0;
@@ -525,7 +525,11 @@ void static CryptotalkcoinMiner(const CChainParams& chainparams, std::shared_ptr
 
 				for(int i=0;i<1;i++){
 					pblock->nNonce=pblock->nNonce+1;
+#ifdef ENABLE_MOMENTUM_HASH_ALGO
+                    testHash=pblock->CalculateBestBirthdayHash();
+#else
 					testHash=pblock->GetHash();
+#endif
 					nHashesDone++;
 					//LogPrintf("testHash %s\n", testHash.ToString().c_str());
 					//LogPrintf("Hash Target %s\n", hashTarget.ToString().c_str());
@@ -537,13 +541,13 @@ void static CryptotalkcoinMiner(const CChainParams& chainparams, std::shared_ptr
 						// Found a solution
 						assert(testHash == pblock->GetHash());
 
-						SetThreadPriority(THREAD_PRIORITY_NORMAL);
+						//SetThreadPriority(THREAD_PRIORITY_NORMAL);
 
 						std::shared_ptr<const CBlock> shared_pblock = std::make_shared<const CBlock>(*pblock);
 						if (!ProcessNewBlock(Params(), shared_pblock, true, nullptr))
 							throw std::runtime_error(strprintf("%s: ProcessNewBlock, block not accepted:", __func__));
 						coinbase_script->KeepScript();
-						SetThreadPriority(THREAD_PRIORITY_LOWEST);
+						//SetThreadPriority(THREAD_PRIORITY_LOWEST);
 						break;
 					}
 				}

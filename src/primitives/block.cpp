@@ -13,27 +13,24 @@
 #include <groestl.h>
 #include <util/strencodings.h>
 
-#ifdef ENABLE_SHA_HASH_ALGO
 uint256 CBlockHeader::GetSHA256() const
 {
     return SerializeHash(*this);
 }
-#endif
-#ifdef ENABLE_MEM_HASH_ALGO
+
 uint256 CBlockHeader::GetMemHash() const
 {
     return AxiomHash(BEGIN(nVersion), END(nNonce));
-}
-#endif
-#ifdef ENABLE_MOMENTUM_HASH_ALGO
-uint256 CBlockHeader::GetMidHash() const
-{
-    return Hash(BEGIN(nVersion), END(nNonce));
 }
 
 uint256 CBlockHeader::GetMomentumHash() const
 {
     return Hash(BEGIN(nVersion), END(nBirthdayB));
+}
+
+uint256 CBlockHeader::GetMidHash() const
+{
+    return Hash(BEGIN(nVersion), END(nNonce));
 }
 
 uint256 CBlockHeader::GetVerifiedHash() const
@@ -58,30 +55,29 @@ uint256 CBlockHeader::CalculateBestBirthdayHash() {
 	uint32_t candidateBirthdayB=0;
 	uint256 smallestHashSoFar = uint256S("0xfffffffffffffffffffffffffffffffffffffffffffffffffffffffffffdddd");
 	for (unsigned i=0; i < results.size(); i++) {
-	nBirthdayA = results[i].first;
-	nBirthdayB = results[i].second;
-	uint256 fullHash = Hash(BEGIN(nVersion), END(nBirthdayB));
-		if(fullHash<smallestHashSoFar){
-	
-				smallestHashSoFar=fullHash;
-				candidateBirthdayA=results[i].first;
-				candidateBirthdayB=results[i].second;
-			}
-			nBirthdayA = candidateBirthdayA;
- 			nBirthdayB = candidateBirthdayB;
- 		}
- 		
- 		return GetHash();
+		nBirthdayA = results[i].first;
+		nBirthdayB = results[i].second;
+		uint256 fullHash = Hash(BEGIN(nVersion), END(nBirthdayB));
+		if(fullHash<smallestHashSoFar){		
+			smallestHashSoFar=fullHash;
+			candidateBirthdayA=results[i].first;
+			candidateBirthdayB=results[i].second;
+		}
+		nBirthdayA = candidateBirthdayA;
+		nBirthdayB = candidateBirthdayB;
+		std::cout << "candidateBirthdayA = " << candidateBirthdayA<< "\n";
+		std::cout << "candidateBirthdayB = " << candidateBirthdayB<< "\n";
+	} 		
+	return GetHash();
 }
-#endif
-#ifdef ENABLE_GROESTL_HASH_ALGO
+
 uint256 CBlockHeader::GetGroestlHash() const
 {
-	CGroestlHashWriter ss(SER_GETHASH, PROTOCOL_VERSION);	//GRS
+	CGroestlHashWriter ss(SER_GETHASH, PROTOCOL_VERSION);
 	ss << *this;
 	return ss.GetHash();
 }
-#endif
+
 uint256 CBlockHeader::GetHash() const
 {
 #ifdef ENABLE_SHA_HASH_ALGO

@@ -41,6 +41,7 @@ public:
     template <typename Stream, typename Operation>
     inline void SerializationOp(Stream& s, Operation ser_action) {
         READWRITE(this->nVersion);
+        nVersion = this->nVersion;
         READWRITE(hashPrevBlock);
         READWRITE(hashMerkleRoot);
         READWRITE(nTime);
@@ -70,21 +71,13 @@ public:
     {
         return (nBits == 0);
     }
-#ifdef ENABLE_SHA_HASH_ALGO
     uint256 GetSHA256() const;
-#endif
-#ifdef ENABLE_MEM_HASH_ALGO 
     uint256 GetMemHash() const;
-#endif
-#ifdef ENABLE_MOMENTUM_HASH_ALGO
     uint256 GetMomentumHash() const;
     uint256 GetVerifiedHash() const;
     uint256 CalculateBestBirthdayHash();
     uint256 GetMidHash() const;
-#endif
-#ifdef ENABLE_GROESTL_HASH_ALGO
     uint256 GetGroestlHash() const;
-#endif
     uint256 GetHash() const;
 
     int64_t GetBlockTime() const
@@ -141,7 +134,7 @@ public:
         block.nNonce         = nNonce;
 # if ENABLE_MOMENTUM_HASH_ALGO
 		block.nBirthdayA     = nBirthdayA;
-        block.nBirthdayB     = nBirthdayB;         
+        block.nBirthdayB     = nBirthdayB;
 #endif
         return block;
     }

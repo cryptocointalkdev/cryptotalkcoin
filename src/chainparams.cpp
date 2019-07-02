@@ -19,28 +19,54 @@
 #include <boost/algorithm/string/split.hpp>
 #include <boost/thread.hpp>
 
-static CBlock CreateGenesisBlock(const char* pszTimestamp, const CScript& genesisOutputScript, uint32_t nTime, uint32_t nNonce, /*uint32_t nBirthdayA, uint32_t nBirthdayB,*/ uint32_t nBits, int32_t nVersion, const CAmount& genesisReward)
-{
-    CMutableTransaction txNew;
-    txNew.nVersion = 1;
-    txNew.vin.resize(1);
-    txNew.vout.resize(1);
-    txNew.vin[0].scriptSig = CScript() << 0 << OP_0;
-    txNew.vout[0].nValue = genesisReward;
-    txNew.vout[0].scriptPubKey = genesisOutputScript;
+#ifdef ENABLE_MOMENTUM_HASH_ALGO
+	static CBlock CreateGenesisBlock(const char* pszTimestamp, const CScript& genesisOutputScript, uint32_t nTime, uint32_t nNonce, uint32_t nBirthdayA, uint32_t nBirthdayB, uint32_t nBits, int32_t nVersion, const CAmount& genesisReward)
+	{
+		CMutableTransaction txNew;
+		txNew.nVersion = 1;
+		txNew.vin.resize(1);
+		txNew.vout.resize(1);
+		txNew.vin[0].scriptSig = CScript() << 0 << OP_0;
+		txNew.vout[0].nValue = genesisReward;
+		txNew.vout[0].scriptPubKey = genesisOutputScript;
 
-    CBlock genesis;
-    genesis.nTime    = nTime;
-    genesis.nBits    = nBits;
-    genesis.nNonce   = nNonce;
-    //genesis.nBirthdayA   = nBirthdayA;
-    //genesis.nBirthdayB   = nBirthdayB;
-    genesis.nVersion = nVersion;
-    genesis.vtx.push_back(MakeTransactionRef(std::move(txNew)));
-    genesis.hashPrevBlock.SetNull();
-    genesis.hashMerkleRoot = BlockMerkleRoot(genesis);
-    return genesis;
-}
+		CBlock genesis;
+		genesis.nTime    = nTime;
+		genesis.nBits    = nBits;
+		genesis.nNonce   = nNonce;
+		genesis.nBirthdayA   = nBirthdayA;
+		genesis.nBirthdayB   = nBirthdayB;
+		genesis.nVersion = nVersion;
+		genesis.vtx.push_back(MakeTransactionRef(std::move(txNew)));
+		genesis.hashPrevBlock.SetNull();
+		genesis.hashMerkleRoot = BlockMerkleRoot(genesis);
+		return genesis;
+	}
+
+#else
+	static CBlock CreateGenesisBlock(const char* pszTimestamp, const CScript& genesisOutputScript, uint32_t nTime, uint32_t nNonce, uint32_t nBits, int32_t nVersion, const CAmount& genesisReward)
+	{
+		CMutableTransaction txNew;
+		txNew.nVersion = 1;
+		txNew.vin.resize(1);
+		txNew.vout.resize(1);
+		txNew.vin[0].scriptSig = CScript() << 0 << OP_0;
+		txNew.vout[0].nValue = genesisReward;
+		txNew.vout[0].scriptPubKey = genesisOutputScript;
+
+		CBlock genesis;
+		genesis.nTime    = nTime;
+		genesis.nBits    = nBits;
+		genesis.nNonce   = nNonce;
+		genesis.nVersion = nVersion;
+		genesis.vtx.push_back(MakeTransactionRef(std::move(txNew)));
+		genesis.hashPrevBlock.SetNull();
+		genesis.hashMerkleRoot = BlockMerkleRoot(genesis);
+		return genesis;
+	}
+#endif
+
+
 
 /**
  * Build the genesis block. Note that the output of its generation
@@ -53,23 +79,43 @@ static CBlock CreateGenesisBlock(const char* pszTimestamp, const CScript& genesi
  *     CTxOut(nValue=50.00000000, scriptPubKey=0x5F1DF16B2B704C8A578D0B)
  *   vMerkleTree: 4a5e1e
  */
-static CBlock CreateGenesisBlock(uint32_t nTime, uint32_t nNonce, /*uint32_t nBirthdayA, uint32_t nBirthdayB, */uint32_t nBits, int32_t nVersion, const CAmount& genesisReward)
-{
-    const char* pszTimestamp = "The Times 03/Jan/2009 Chancellor on brink of second bailout for banks";
-    const CScript genesisOutputScript = CScript() << ParseHex("04678afdb0fe5548271967f1a67130b7105cd6a828e03909a67962e0ea1f61deb649f6bc3f4cef38c4f35504e51ec112de5c384df7ba0b8d578a4c702b6bf11d5f") << OP_CHECKSIG;
-    return CreateGenesisBlock(pszTimestamp, genesisOutputScript, nTime, nNonce,/* nBirthdayA, nBirthdayB, */nBits, nVersion, genesisReward);
-}
+
+#ifdef ENABLE_MOMENTUM_HASH_ALGO
+	static CBlock CreateGenesisBlock(uint32_t nTime, uint32_t nNonce, uint32_t nBirthdayA, uint32_t nBirthdayB, uint32_t nBits, int32_t nVersion, const CAmount& genesisReward)
+	{
+		const char* pszTimestamp = "The Times 03/Jan/2009 Chancellor on brink of second bailout for banks";
+		const CScript genesisOutputScript = CScript() << ParseHex("04678afdb0fe5548271967f1a67130b7105cd6a828e03909a67962e0ea1f61deb649f6bc3f4cef38c4f35504e51ec112de5c384df7ba0b8d578a4c702b6bf11d5f") << OP_CHECKSIG;
+		return CreateGenesisBlock(pszTimestamp, genesisOutputScript, nTime, nNonce, nBirthdayA, nBirthdayB, nBits, nVersion, genesisReward);
+	}
+#else
+	static CBlock CreateGenesisBlock(uint32_t nTime, uint32_t nNonce, uint32_t nBirthdayA, uint32_t nBirthdayB, uint32_t nBits, int32_t nVersion, const CAmount& genesisReward)
+	{
+		const char* pszTimestamp = "The Times 03/Jan/2009 Chancellor on brink of second bailout for banks";
+		const CScript genesisOutputScript = CScript() << ParseHex("04678afdb0fe5548271967f1a67130b7105cd6a828e03909a67962e0ea1f61deb649f6bc3f4cef38c4f35504e51ec112de5c384df7ba0b8d578a4c702b6bf11d5f") << OP_CHECKSIG;
+		return CreateGenesisBlock(pszTimestamp, genesisOutputScript, nTime, nNonce,nBits, nVersion, genesisReward);
+	}
+#endif
 
 void static MineNewGenesisBlock(const Consensus::Params& consensus,CBlock &genesis)
 {
     //fPrintToConsole = true;
     LogPrintf("Searching for genesis block...\n");
     std::cout << "Searching for genesis block...\n";
-
     arith_uint256 hashTarget = UintToArith256(consensus.powLimit);
+
     while(true) {
+#ifdef ENABLE_MOMENTUM_HASH_ALGO
+        arith_uint256 thash = UintToArith256(genesis.CalculateBestBirthdayHash());
+#else
         arith_uint256 thash = UintToArith256(genesis.GetHash());
-        if (thash <= hashTarget)
+#endif
+
+		LogPrintf("teHash %s\n", thash.ToString().c_str());
+        std::cout << "testHash = " << thash.ToString().c_str() << "\n";
+		LogPrintf("Hash Target %s\n", hashTarget.ToString().c_str());
+        std::cout << "Hash Target = " << hashTarget.ToString().c_str() << "\n";
+
+      if (thash <= hashTarget)
             break;
         if ((genesis.nNonce & 0xFFF) == 0)
             LogPrintf("nonce %08X: hash = %s (target = %s)\n", genesis.nNonce, thash.ToString().c_str(), hashTarget.ToString().c_str());
@@ -82,16 +128,20 @@ void static MineNewGenesisBlock(const Consensus::Params& consensus,CBlock &genes
     }
     std::cout << "genesis.nTime = " << genesis.nTime << "\n";
     std::cout << "genesis.nNonce = " << genesis.nNonce<< "\n";
-    //std::cout << "genesis.nBirthdayA = " << genesis.nBirthdayA<< "\n";
-    //std::cout << "genesis.nBirthdayB = " << genesis.nBirthdayB<< "\n";
+#ifdef ENABLE_MOMENTUM_HASH_ALGO
+    std::cout << "genesis.nBirthdayA = " << genesis.nBirthdayA<< "\n";
+    std::cout << "genesis.nBirthdayB = " << genesis.nBirthdayB<< "\n";
+#endif
     std::cout << "genesis.nBits = " << genesis.nBits<< "\n";
     std::cout << "genesis.GetHash = " << genesis.GetHash().ToString().c_str()<< "\n";
     std::cout << "genesis.hashMerkleRoot = " << genesis.hashMerkleRoot.ToString().c_str()<< "\n";
 
     LogPrintf("genesis.nTime = %u \n",  genesis.nTime);
     LogPrintf("genesis.nNonce = %u \n",  genesis.nNonce);
-	//LogPrintf("genesis.nBirthdayA: %d\n", genesis.nBirthdayA);
-	//LogPrintf("genesis.nBirthdayB: %d\n", genesis.nBirthdayB);
+#ifdef ENABLE_MOMENTUM_HASH_ALGO
+	LogPrintf("genesis.nBirthdayA: %d\n", genesis.nBirthdayA);
+	LogPrintf("genesis.nBirthdayB: %d\n", genesis.nBirthdayB);
+#endif
     LogPrintf("genesis.nBits = %u \n",  genesis.nBits);
     LogPrintf("genesis.GetHash = %s\n",  genesis.GetHash().ToString().c_str());
     LogPrintf("genesis.hashMerkleRoot = %s\n",  genesis.hashMerkleRoot.ToString().c_str());
@@ -111,7 +161,11 @@ public:
         consensus.BIP34Hash = uint256S("0x00");
         consensus.BIP65Height = 0; // 000000000000000004c2b624ed5d7756c508d90fd0da2c7c679febfa6c4735f0
         consensus.BIP66Height = 0; // 00000000000000000379eaa19dce8c9b722d46ae6a57c2f1a988119488b50931
+#ifdef ENABLE_MOMENTUM_HASH_ALGO
+        consensus.powLimit = uint256S("1fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
+#else
         consensus.powLimit = uint256S("00000fffffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
+#endif
         consensus.nPowTargetTimespan = 60; // two weeks
         consensus.nPowTargetSpacing =  60;
         consensus.fPowAllowMinDifficultyBlocks = false;
@@ -151,8 +205,11 @@ public:
         nPruneAfterHeight = 100000;
         m_assumed_blockchain_size = 0;
         m_assumed_chain_state_size = 0;
-
-        genesis = CreateGenesisBlock(1561468723, 260848/*, 0, 0 */,0x1e0fffff, 1, 5 * COIN);
+#ifdef ENABLE_MOMENTUM_HASH_ALGO
+        genesis = CreateGenesisBlock(1562065759, 10, 45045031, 59845590 ,0x201fffff, 1, 5 * COIN);
+#else
+        genesis = CreateGenesisBlock(1561928393, 221227,0x1e0fffff, 1, 5 * COIN);
+#endif
         consensus.hashGenesisBlock = genesis.GetHash();
         
 	    //static boost::thread_group* minerThreads = NULL; 
@@ -161,7 +218,7 @@ public:
         //    minerThreads->create_thread(boost::bind(&MineNewGenesisBlock,consensus,genesis));
         //MilliSleep(20000000);
         //MineNewGenesisBlock(consensus,genesis);
-        assert(consensus.hashGenesisBlock == uint256S("0x0000067bf2942c31d56a23edb200e73d33a660b7357d4b3a3350ad05d7e58faa"));
+        assert(consensus.hashGenesisBlock == uint256S("0x09aa1c27f555e9cfcca36e8286dd0a8dec11788fb6227a3ea5fc5a63b6212831"));
         assert(genesis.hashMerkleRoot == uint256S("0x202b7ffe141c1d8b99e1b76845a24d1933be562c32e56663768cf4c161f772e4"));
 
         // Note that of those which support the service bits prefix, most only support a subset of
@@ -255,7 +312,11 @@ public:
         m_assumed_blockchain_size = 30;
         m_assumed_chain_state_size = 2;
 
-        genesis = CreateGenesisBlock(1296688602, 414098458/*, 0, 0 */, 0x1d00ffff, 1, 50 * COIN);
+#ifdef ENABLE_MOMENTUM_HASH_ALGO
+        genesis = CreateGenesisBlock(1561468723, 260848, 0, 0 ,0x201fffff, 1, 5 * COIN);
+#else
+        genesis = CreateGenesisBlock(1561928393, 221227,0x1e0fffff, 1, 5 * COIN);
+#endif
         consensus.hashGenesisBlock = genesis.GetHash();
        // assert(consensus.hashGenesisBlock == uint256S("0x000000000933ea01ad0ee984209779baaec3ced90fa3f408719526f8d77f4943"));
        // assert(genesis.hashMerkleRoot == uint256S("0x4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b"));
@@ -348,7 +409,11 @@ public:
 
         UpdateVersionBitsParametersFromArgs(args);
 
-        genesis = CreateGenesisBlock(1296688602, 2/*, 0, 0 */, 0x207fffff, 1, 50 * COIN);
+#ifdef ENABLE_MOMENTUM_HASH_ALGO
+        genesis = CreateGenesisBlock(1561468723, 260848, 0, 0 ,0x201fffff, 1, 5 * COIN);
+#else
+        genesis = CreateGenesisBlock(1561928393, 221227,0x1e0fffff, 1, 5 * COIN);
+#endif
         consensus.hashGenesisBlock = genesis.GetHash();
        // assert(consensus.hashGenesisBlock == uint256S("0x0f9188f13cb7b2c71f2a335e3a4fc328bf5beb436012afca590b1a11466e2206"));
       //  assert(genesis.hashMerkleRoot == uint256S("0x4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b"));
