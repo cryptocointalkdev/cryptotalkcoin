@@ -181,7 +181,10 @@ public:
     uint32_t nTime;
     uint32_t nBits;
     uint32_t nNonce;
-
+#ifdef ENABLE_MOMENTUM_HASH_ALGO
+    uint32_t nBirthdayA;
+    uint32_t nBirthdayB;
+#endif
     //! (memory only) Sequential id assigned to distinguish order in which blocks are received.
     int32_t nSequenceId;
 
@@ -209,6 +212,10 @@ public:
         nTime          = 0;
         nBits          = 0;
         nNonce         = 0;
+#ifdef ENABLE_MOMENTUM_HASH_ALGO
+        nBirthdayA	   = 0;
+        nBirthdayB	   = 0;
+#endif
     }
 
     CBlockIndex()
@@ -225,6 +232,10 @@ public:
         nTime          = block.nTime;
         nBits          = block.nBits;
         nNonce         = block.nNonce;
+#ifdef ENABLE_MOMENTUM_HASH_ALGO
+        nBirthdayA     = block.nBirthdayA;
+        nBirthdayB     = block.nBirthdayB;
+#endif
     }
 
     FlatFilePos GetBlockPos() const {
@@ -255,6 +266,10 @@ public:
         block.nTime          = nTime;
         block.nBits          = nBits;
         block.nNonce         = nNonce;
+#ifdef ENABLE_MOMENTUM_HASH_ALGO
+        block.nBirthdayA     = nBirthdayA;
+        block.nBirthdayB     = nBirthdayB;
+#endif
         return block;
     }
 
@@ -383,6 +398,10 @@ public:
         READWRITE(nTime);
         READWRITE(nBits);
         READWRITE(nNonce);
+#ifdef ENABLE_MOMENTUM_HASH_ALGO
+        READWRITE(nBirthdayA);
+        READWRITE(nBirthdayB);
+#endif
     }
 
     uint256 GetBlockHash() const
@@ -394,6 +413,10 @@ public:
         block.nTime           = nTime;
         block.nBits           = nBits;
         block.nNonce          = nNonce;
+#ifdef ENABLE_MOMENTUM_HASH_ALGO
+        block.nBirthdayA     = nBirthdayA;
+        block.nBirthdayB     = nBirthdayB;
+#endif
         return block.GetHash();
     }
 

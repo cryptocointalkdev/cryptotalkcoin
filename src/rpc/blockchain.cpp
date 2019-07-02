@@ -107,6 +107,10 @@ UniValue blockheaderToJSON(const CBlockIndex* tip, const CBlockIndex* blockindex
     result.pushKV("time", (int64_t)blockindex->nTime);
     result.pushKV("mediantime", (int64_t)blockindex->GetMedianTimePast());
     result.pushKV("nonce", (uint64_t)blockindex->nNonce);
+#ifdef ENABLE_MOMENTUM_HASH_ALGO
+    result.pushKV("BirthdayA", (uint64_t)blockindex->nBirthdayA);
+    result.pushKV("BirthdayB", (uint64_t)blockindex->nBirthdayB);
+#endif
     result.pushKV("bits", strprintf("%08x", blockindex->nBits));
     result.pushKV("difficulty", GetDifficulty(blockindex));
     result.pushKV("chainwork", blockindex->nChainWork.GetHex());
