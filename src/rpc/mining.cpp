@@ -148,7 +148,7 @@ RPCHelpMan{ "generate",
     }
 
     int num_generate = request.params[0].get_int();
-    uint64_t max_tries = 1000000;
+    uint64_t max_tries = 1000000000;
     if (!request.params[1].isNull()) {
         max_tries = request.params[1].get_int();
     }
@@ -302,6 +302,19 @@ static UniValue generatetoaddress(const JSONRPCRequest& request)
     return generateBlocks(coinbaseScript, nGenerate, nMaxTries, false);
 }
 
+static UniValue getsubsidy(const JSONRPCRequest& request)
+{
+    if (request.fHelp || request.params.size() > 1)
+        throw std::runtime_error(
+            "getsubsidy [nTarget]\n"
+            "Returns subsidy value for the specified value of target.");
+    int nTarget = request.params.size() == 1 ? request.params[0].get_int() : ::ChainActive().Height();
+    if (nTarget < 0)
+        throw JSONRPCError(RPC_INVALID_PARAMETER, "Block height out of range");
+    const Consensus::Params& consensusParams = Params().GetConsensus();
+    return (uint64_t)GetBlockSubsidy(nTarget, consensusParams);
+}
+
 static UniValue getmininginfo(const JSONRPCRequest& request)
 {
     if (request.fHelp || request.params.size() != 0) {
@@ -335,6 +348,7 @@ static UniValue getmininginfo(const JSONRPCRequest& request)
     if (BlockAssembler::m_last_block_weight) obj.pushKV("currentblockweight", *BlockAssembler::m_last_block_weight);
     if (BlockAssembler::m_last_block_num_txs) obj.pushKV("currentblocktx", *BlockAssembler::m_last_block_num_txs);
     obj.pushKV("difficulty",       (double)GetDifficulty(::ChainActive().Tip()));
+    obj.pushKV("blockvalue",    (uint64_t)GetBlockSubsidy(::ChainActive().Height(), Params().GetConsensus()));
     obj.pushKV("networkhashps",    getnetworkhashps(request));
     obj.pushKV("pooledtx",         (uint64_t)mempool.size());
     obj.pushKV("chain",            Params().NetworkIDString());
@@ -1101,7 +1115,7 @@ static const CRPCCommand commands[] =
     { "mining",             "getblocktemplate",       &getblocktemplate,       {"template_request"} },
     { "mining",             "submitblock",            &submitblock,            {"hexdata","dummy"} },
     { "mining",             "submitheader",           &submitheader,           {"hexdata"} },
-
+    { "mining",             "getsubsidy",             &getsubsidy,             {"height"} },
 
     { "generating",         "generatetoaddress",      &generatetoaddress,      {"nblocks","address","maxtries"} },
     { "generating",         "setgenerate",            &setgenerate,            {"genproclimit"} },
