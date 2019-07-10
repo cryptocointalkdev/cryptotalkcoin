@@ -10,10 +10,9 @@
 
 void CIbtp::LoadMsgStart()
 {
-    vChains.push_back(SChain("Litecoin", "LTC", 0xfb, 0xc0, 0xb6, 0xdb));
-    vChains.push_back(SChain("Bitcoin", "BTC", 0xf9, 0xbe, 0xb4, 0xd9));
-    vChains.push_back(SChain("Dash", "DSH", 0xbf, 0x0c, 0x6b, 0xbd));
-    vChains.push_back(SChain("Codex", "CDX", 0xaa, 0xab, 0xac, 0xad));
+    vChains.push_back(SChain("cryptotalkcoin", "CRT", 0xf7, 0xba, 0xd4, 0xa9, 8383));
+    vChains.push_back(SChain("talk", "TALK", 0xf7, 0xba, 0xd4, 0xaa, 8373));
+    vChains.push_back(SChain("Codex", "CDX", 0xf7, 0xba, 0xd4, 0xab, 8363));
 }
 
 bool CIbtp::IsIbtpChain(const unsigned char msgStart[], std::string& chainName)

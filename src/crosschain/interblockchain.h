@@ -20,13 +20,14 @@ public:
     unsigned char pchMessageTwo;
     unsigned char pchMessageThree;
     unsigned char pchMessageFour;
+    int dport;
 
     SChain()
     {
 
     }
 
-    SChain(std::string sName, std::string sCode, unsigned char cOne, unsigned char cTwo, unsigned char cThree, unsigned char cFour)
+    SChain(std::string sName, std::string sCode, unsigned char cOne, unsigned char cTwo, unsigned char cThree, unsigned char cFour, int port)
     {
         sChainName = sName;
         sCurrencyCode = sCode;
@@ -34,6 +35,7 @@ public:
         pchMessageTwo = cTwo;
         pchMessageThree = cThree;
         pchMessageFour = cFour;
+        dport = port;
     }
 };
 
