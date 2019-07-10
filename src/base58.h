@@ -41,7 +41,7 @@ NODISCARD bool DecodeBase58(const char* psz, std::vector<unsigned char>& vchRet)
  * Decode a base58-encoded string (str) into a byte vector (vchRet).
  * return true if decoding is successful.
  */
-NODISCARD bool DecodeBase58(const std::string& str, std::vector<unsigned char>& vchRet);
+ bool DecodeBase58(const std::string& str, std::vector<unsigned char>& vchRet);
 
 /**
  * Encode a byte vector into a base58-encoded string, including checksum

@@ -20,6 +20,7 @@
 #include <primitives/transaction.h>
 #include <script/descriptor.h>
 #include <script/script.h>
+#include "smessage/smessage.h"
 #include <util/bip32.h>
 #include <util/error.h>
 #include <util/fees.h>
@@ -509,6 +510,15 @@ bool CWallet::Unlock(const SecureString& strWalletPassphrase, bool accept_no_key
 {
     CCrypter crypter;
     CKeyingMaterial _vMasterKey;
+    auto locked_chain = chain().lock();
+    
+    if (!IsLocked())
+    {
+#ifdef ENABLE_SECURE_MESSAGING
+        locked_chain->secureMsgWalletUnlocked();
+#endif
+        return true;
+    }
 
     {
         LOCK(cs_wallet);
@@ -521,6 +531,9 @@ bool CWallet::Unlock(const SecureString& strWalletPassphrase, bool accept_no_key
             if (CCryptoKeyStore::Unlock(_vMasterKey, accept_no_keys)) {
                 // Now that we've unlocked, upgrade the key metadata
                 UpgradeKeyMetadata();
+#ifdef ENABLE_SECURE_MESSAGING
+                locked_chain->secureMsgWalletUnlocked();
+#endif
                 return true;
             }
         }
@@ -3288,6 +3301,8 @@ DBErrors CWallet::ZapWalletTx(std::vector<CWalletTx>& vWtx)
 
 bool CWallet::SetAddressBookWithDB(WalletBatch& batch, const CTxDestination& address, const std::string& strName, const std::string& strPurpose)
 {
+	bool fOwned = ::IsMine(*this, address) != ISMINE_NO;
+	auto locked_chain = chain().lock();
     bool fUpdated = false;
     {
         LOCK(cs_wallet);
@@ -3297,6 +3312,14 @@ bool CWallet::SetAddressBookWithDB(WalletBatch& batch, const CTxDestination& add
         if (!strPurpose.empty()) /* update purpose only if requested */
             mapAddressBook[address].purpose = strPurpose;
     }
+
+    if (fOwned)
+    {
+#ifdef ENABLE_SECURE_MESSAGING
+        locked_chain->secureMsgWalletKeyChanged(EncodeDestination(address), strName, (fUpdated ? CT_UPDATED : CT_NEW));
+#endif
+    }
+
     NotifyAddressBookChanged(this, address, strName, ::IsMine(*this, address) != ISMINE_NO,
                              strPurpose, (fUpdated ? CT_UPDATED : CT_NEW) );
     if (!strPurpose.empty() && !batch.WritePurpose(EncodeDestination(address), strPurpose))
@@ -3322,6 +3345,17 @@ bool CWallet::DelAddressBook(const CTxDestination& address)
             WalletBatch(*database).EraseDestData(strAddress, item.first);
         }
         mapAddressBook.erase(address);
+    }
+
+    bool fOwned = ::IsMine(*this, address) != ISMINE_NO;
+    auto locked_chain = chain().lock();
+
+    
+    if (fOwned)
+    {
+#ifdef ENABLE_SECURE_MESSAGING
+        locked_chain->secureMsgWalletKeyChanged(EncodeDestination(address), "", CT_DELETED); //TODO: change second argument, when it is in use
+#endif
     }
 
     NotifyAddressBookChanged(this, address, "", ::IsMine(*this, address) != ISMINE_NO, "", CT_DELETED);

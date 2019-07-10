@@ -50,6 +50,10 @@ void WalletFrame::addWallet(WalletModel *walletModel)
     walletView->setCryptotalkcoinGUI(gui);
     walletView->setClientModel(clientModel);
     walletView->setWalletModel(walletModel);
+#ifdef ENABLE_SECURE_MESSAGING
+    this->messageModel = new MessageModel(walletModel);
+    walletView->setMessageModel(messageModel);
+#endif
     walletView->showOutOfSyncWarning(bOutOfSync);
 
     WalletView* current_wallet_view = currentWalletView();
@@ -127,6 +131,21 @@ void WalletFrame::gotoHistoryPage()
     for (i = mapWalletViews.constBegin(); i != mapWalletViews.constEnd(); ++i)
         i.value()->gotoHistoryPage();
 }
+#ifdef ENABLE_SECURE_MESSAGING
+void WalletFrame::gotoSendMessagesPage()
+{
+    QMap<WalletModel*, WalletView*>::const_iterator i;
+    for (i = mapWalletViews.constBegin(); i != mapWalletViews.constEnd(); ++i)
+        i.value()->gotoSendMessagesPage();
+}
+
+void WalletFrame::gotoMessagesPage()
+{
+    QMap<WalletModel*, WalletView*>::const_iterator i;
+    for (i = mapWalletViews.constBegin(); i != mapWalletViews.constEnd(); ++i)
+        i.value()->gotoMessagesPage();
+}
+#endif
 
 void WalletFrame::gotoReceiveCoinsPage()
 {

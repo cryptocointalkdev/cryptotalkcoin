@@ -142,6 +142,9 @@ const CLogCategoryDesc LogCategories[] =
     {BCLog::COINDB, "coindb"},
     {BCLog::QT, "qt"},
     {BCLog::LEVELDB, "leveldb"},
+#ifdef ENABLE_SECURE_MESSAGING
+    {BCLog::SMSG, "smsg"},
+#endif
     {BCLog::ALL, "1"},
     {BCLog::ALL, "all"},
 };

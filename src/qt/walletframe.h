@@ -7,6 +7,7 @@
 
 #include <QFrame>
 #include <QMap>
+#include <qt/messagemodel.h>
 
 class CryptotalkcoinGUI;
 class ClientModel;
@@ -14,6 +15,7 @@ class PlatformStyle;
 class SendCoinsRecipient;
 class WalletModel;
 class WalletView;
+class MessageModel;
 
 QT_BEGIN_NAMESPACE
 class QStackedWidget;
@@ -53,6 +55,9 @@ private:
     QStackedWidget *walletStack;
     CryptotalkcoinGUI *gui;
     ClientModel *clientModel;
+#ifdef ENABLE_SECURE_MESSAGING
+    MessageModel *messageModel;
+#endif
     QMap<WalletModel*, WalletView*> mapWalletViews;
 
     bool bOutOfSync;
@@ -77,7 +82,11 @@ public Q_SLOTS:
     void gotoSignMessageTab(QString addr = "");
     /** Show Sign/Verify Message dialog and switch to verify message tab */
     void gotoVerifyMessageTab(QString addr = "");
+#ifdef ENABLE_SECURE_MESSAGING
+	void gotoSendMessagesPage();
 
+    void gotoMessagesPage();
+#endif
     /** Encrypt the wallet */
     void encryptWallet(bool status);
     /** Backup the wallet */

@@ -54,6 +54,9 @@ namespace BCLog {
         COINDB      = (1 << 18),
         QT          = (1 << 19),
         LEVELDB     = (1 << 20),
+#ifdef ENABLE_SECURE_MESSAGING
+        SMSG   = (1 << 22),
+#endif
         ALL         = ~(uint32_t)0,
     };
 

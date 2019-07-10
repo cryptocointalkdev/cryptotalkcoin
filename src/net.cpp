@@ -529,6 +529,10 @@ void CNode::copyStats(CNodeStats &stats)
         LOCK(cs_feeFilter);
         X(minFeeFilter);
     }
+#ifdef ENABLE_IBTP
+    X(sBlockchain);
+    X(fForeignNode);
+#endif
 
     // It is common for nodes with good ping times to suddenly become lagged,
     // due to a new block arriving or other large transfer.
@@ -1799,9 +1803,14 @@ void CConnman::ThreadOpenConnections(const std::vector<std::string> connect)
             }
 
             // do not allow non-default ports, unless after 50 invalid addresses selected already
+#ifdef ENABLE_IBTP
+            //if (addr.GetPort() != Params().GetDefaultPort() || !inour vector)
+            //    continue;
+#else
+
             if (addr.GetPort() != Params().GetDefaultPort() && nTries < 50)
                 continue;
-
+#endif
             addrConnect = addr;
             break;
         }
@@ -2629,6 +2638,10 @@ CNode::CNode(NodeId idIn, ServiceFlags nLocalServicesIn, int nMyStartingHeightIn
     addrName = addrNameIn == "" ? addr.ToStringIPPort() : addrNameIn;
     hashContinue = uint256();
     filterInventoryKnown.reset();
+#ifdef ENABLE_IBTP
+    sBlockchain = "Bitcoin";
+    fForeignNode = false;
+#endif
     pfilter = MakeUnique<CBloomFilter>();
 
     for (const std::string &msg : getAllNetMessageTypes())
@@ -2640,6 +2653,11 @@ CNode::CNode(NodeId idIn, ServiceFlags nLocalServicesIn, int nMyStartingHeightIn
     } else {
         LogPrint(BCLog::NET, "Added connection peer=%d\n", id);
     }
+#ifdef ENABLE_IBTP
+    // Be shy and don't send version until we hear
+    //if (hSocket != INVALID_SOCKET && !fInbound)
+    //    PushVersion(sBlockchain); need to fix this
+#endif
 }
 
 CNode::~CNode()

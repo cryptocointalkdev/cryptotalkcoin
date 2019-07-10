@@ -273,6 +273,20 @@ void CryptotalkcoinGUI::createActions()
     historyAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_4));
     tabGroup->addAction(historyAction);
 
+#ifdef ENABLE_SECURE_MESSAGING
+    sendMessagesAction = new QAction(platformStyle->SingleColorIcon(":/icons/null"), tr("Send &Message"), this);
+    sendMessagesAction->setCheckable(true);
+    sendMessagesAction->setStatusTip(tr("Send Messages"));
+    sendMessagesAction->setToolTip(sendMessagesAction->statusTip());
+    tabGroup->addAction(sendMessagesAction);
+
+    messageAction = new QAction(platformStyle->SingleColorIcon(":/icons/null"), tr("Mess&ages"), this);
+    messageAction->setStatusTip(tr("View Messages"));
+    messageAction->setToolTip(messageAction->statusTip());
+    messageAction->setCheckable(true);
+    tabGroup->addAction(messageAction);
+#endif
+
 #ifdef ENABLE_WALLET
     // These showNormalIfMinimized are needed because Send Coins and Receive Coins
     // can be triggered from the tray menu, and need to show the GUI to be useful.
@@ -288,6 +302,12 @@ void CryptotalkcoinGUI::createActions()
     connect(receiveCoinsMenuAction, &QAction::triggered, this, &CryptotalkcoinGUI::gotoReceiveCoinsPage);
     connect(historyAction, &QAction::triggered, [this]{ showNormalIfMinimized(); });
     connect(historyAction, &QAction::triggered, this, &CryptotalkcoinGUI::gotoHistoryPage);
+#ifdef ENABLE_SECURE_MESSAGING
+    connect(sendMessagesAction, &QAction::triggered, [this]{ showNormalIfMinimized(); });
+    connect(sendMessagesAction, &QAction::triggered, this, &CryptotalkcoinGUI::gotoSendMessagesPage);
+    connect(messageAction, &QAction::triggered, [this]{ showNormalIfMinimized(); });
+    connect(messageAction, &QAction::triggered, this, &CryptotalkcoinGUI::gotoMessagesPage);
+#endif
 #endif // ENABLE_WALLET
 
     quitAction = new QAction(platformStyle->TextColorIcon(":/icons/quit"), tr("E&xit"), this);
@@ -535,6 +555,10 @@ void CryptotalkcoinGUI::createToolBars()
         toolbar->addAction(sendCoinsAction);
         toolbar->addAction(receiveCoinsAction);
         toolbar->addAction(historyAction);
+#ifdef ENABLE_SECURE_MESSAGING
+        toolbar->addAction(sendMessagesAction);
+        toolbar->addAction(messageAction);
+#endif
         overviewAction->setChecked(true);
 
 #ifdef ENABLE_WALLET
@@ -718,6 +742,10 @@ void CryptotalkcoinGUI::setWalletActionsEnabled(bool enabled)
     usedSendingAddressesAction->setEnabled(enabled);
     usedReceivingAddressesAction->setEnabled(enabled);
     openAction->setEnabled(enabled);
+#ifdef ENABLE_SECURE_MESSAGING
+    sendMessagesAction->setEnabled(enabled);
+    messageAction->setEnabled(enabled);
+#endif
     m_close_wallet_action->setEnabled(enabled);
 }
 
@@ -829,6 +857,19 @@ void CryptotalkcoinGUI::openClicked()
         Q_EMIT receivedURI(dlg.getURI());
     }
 }
+#ifdef ENABLE_SECURE_MESSAGING
+void CryptotalkcoinGUI::gotoSendMessagesPage()
+{
+    sendMessagesAction->setChecked(true);
+    if (walletFrame) walletFrame->gotoSendMessagesPage();
+}
+
+void CryptotalkcoinGUI::gotoMessagesPage()
+{
+    messageAction->setChecked(true);
+    if (walletFrame) walletFrame->gotoMessagesPage();
+}
+#endif
 
 void CryptotalkcoinGUI::gotoOverviewPage()
 {
@@ -1170,6 +1211,26 @@ void CryptotalkcoinGUI::incomingTransaction(const QString& date, int unit, const
     message((amount)<0 ? tr("Sent transaction") : tr("Incoming transaction"),
              msg, CClientUIInterface::MSG_INFORMATION);
 }
+#ifdef ENABLE_SECURE_MESSAGING
+void CryptotalkcoinGUI::incomingMessage(const QString& sent_datetime, QString from_address, QString to_address, QString message, int type)
+{
+    // Prevent balloon-spam when initial block download is in progress
+
+    if (type == MessageTableEntry::Received)
+    {
+        notificator->notify(Notificator::Information,
+                            tr("Incoming Message"),
+                            tr("Date: %1\n"
+                               "From Address: %2\n"
+                               "To Address: %3\n"
+                               "Message: %4\n")
+                              .arg(sent_datetime)
+                              .arg(from_address)
+                              .arg(to_address)
+                              .arg(message));
+    };
+}
+#endif
 #endif // ENABLE_WALLET
 
 void CryptotalkcoinGUI::dragEnterEvent(QDragEnterEvent *event)
@@ -1468,4 +1529,13 @@ void UnitDisplayStatusBarControl::onMenuSelection(QAction* action)
     {
         optionsModel->setDisplayUnit(action->data());
     }
+}
+
+void CryptotalkcoinGUI::mousePressEvent(QMouseEvent *event) {
+    m_nMouseClick_X_Coordinate = event->x();
+    m_nMouseClick_Y_Coordinate = event->y();
+}
+
+void CryptotalkcoinGUI::mouseMoveEvent(QMouseEvent *event) {
+    move(event->globalX() - m_nMouseClick_X_Coordinate, event->globalY() - m_nMouseClick_Y_Coordinate);
 }

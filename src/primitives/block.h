@@ -132,7 +132,7 @@ public:
         block.nTime          = nTime;
         block.nBits          = nBits;
         block.nNonce         = nNonce;
-# if ENABLE_MOMENTUM_HASH_ALGO
+#ifdef ENABLE_MOMENTUM_HASH_ALGO
 		block.nBirthdayA     = nBirthdayA;
         block.nBirthdayB     = nBirthdayB;
 #endif

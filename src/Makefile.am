@@ -10,6 +10,37 @@ AM_CPPFLAGS = $(DEBUG_CPPFLAGS) $(HARDENED_CPPFLAGS) -DENABLE_MOMENTUM_HASH_ALGO
 AM_LIBTOOLFLAGS = --preserve-dup-deps
 EXTRA_LIBRARIES =
 
+if ENABLE_SECURE_MESSAGING
+AM_CXXFLAGS += -DENABLE_SECURE_MESSAGING
+AM_CPPFLAGS += -DENABLE_SECURE_MESSAGING
+endif
+
+if ENABLE_IBTP
+AM_CXXFLAGS += -DENABLE_IBTP
+AM_CPPFLAGS += -DENABLE_IBTP
+endif
+
+if ENABLE_MOMENTUM_HASH_ALGO
+AM_CXXFLAGS += -DENABLE_MOMENTUM_HASH_ALGO
+AM_CPPFLAGS += -DENABLE_MOMENTUM_HASH_ALGO
+endif
+
+if ENABLE_SHA_HASH_ALGO
+AM_CXXFLAGS += -DENABLE_SHA_HASH_ALGO
+AM_CPPFLAGS += -DENABLE_SHA_HASH_ALGO
+endif
+
+if ENABLE_GROESTL_HASH_ALGO
+AM_CXXFLAGS += -DENABLE_GROESTL_HASH_ALGO
+AM_CPPFLAGS += -DENABLE_GROESTL_HASH_ALGO
+endif
+
+if ENABLE_MEM_HASH_ALGO
+AM_CXXFLAGS += -DENABLE_MEM_HASH_ALGO
+AM_CPPFLAGS += -DENABLE_MEM_HASH_ALGO
+endif
+
+
 if EMBEDDED_UNIVALUE
 LIBUNIVALUE = univalue/libunivalue.la
 
@@ -128,6 +159,7 @@ CRYPTOTALKCOIN_CORE_H = \
   consensus/tx_verify.h \
   core_io.h \
   core_memusage.h \
+  crosschain/interblockchain.h \
   cuckoocache.h \
   flatfile.h \
   fs.h \
@@ -190,6 +222,9 @@ CRYPTOTALKCOIN_CORE_H = \
   script/standard.h \
   semiOrderedMap.h \
   shutdown.h \
+  smessage/lz4.h \
+  smessage/smessage.h \
+  smessage/xxhash.h \
   sphlib/sph_types.h \
   sphlib/sph_groestl.h \
   sphlib/sph_shabal.h \
@@ -295,8 +330,12 @@ libcryptotalkcoin_server_a_SOURCES = \
   rpc/net.cpp \
   rpc/rawtransaction.cpp \
   rpc/server.cpp \
+  rpc/smessage.cpp \
   script/sigcache.cpp \
   shutdown.cpp \
+  smessage/lz4.c \
+  smessage/smessage.cpp \
+  smessage/xxhash.c \
   timedata.cpp \
   torcontrol.cpp \
   txdb.cpp \
@@ -461,6 +500,7 @@ libcryptotalkcoin_common_a_SOURCES = \
   key_io.cpp \
   keystore.cpp \
   merkleblock.cpp \
+  crosschain/interblockchain.cpp \
   netaddress.cpp \
   netbase.cpp \
   outputtype.cpp \

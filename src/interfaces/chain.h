@@ -13,6 +13,7 @@
 #include <stdint.h>
 #include <string>
 #include <vector>
+#include <ui_interface.h>
 
 class CBlock;
 class CFeeRate;
@@ -97,7 +98,11 @@ public:
         //! Check that the block is available on disk (i.e. has not been
         //! pruned), and contains transactions.
         virtual bool haveBlockOnDisk(int height) = 0;
-
+#ifdef ENABLE_SECURE_MESSAGING
+        virtual bool smsgStart()=0;
+        virtual void secureMsgWalletUnlocked()=0;
+        virtual void secureMsgWalletKeyChanged(std::string sAddress, std::string sLabel, ChangeType mode) =0;
+#endif
         //! Return height of the first block in the chain with timestamp equal
         //! or greater than the given time and height equal or greater than the
         //! given height, or nullopt if there is no block with a high enough

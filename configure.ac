@@ -103,6 +103,42 @@ AM_CONDITIONAL([HAVE_DOXYGEN], [test -n "$DOXYGEN"])
 
 AC_ARG_VAR(PYTHONPATH, Augments the default search path for python module files)
 
+AC_ARG_ENABLE([momentum-hash-algo],
+  [AS_HELP_STRING([--disable-momentum-algo],
+  [select algorithm(s) (enable by default)])],
+  [momentum_algo=$enableval],
+  [momentum_algo=yes])
+
+AC_ARG_ENABLE([sha-hash-algo],
+  [AS_HELP_STRING([--enable-sha-algo],
+  [select sha256 pow (disabled by default)])],
+  [sha_algo=$enableval],
+  [sha_algo=no])
+
+AC_ARG_ENABLE([groestl-hash-algo],
+  [AS_HELP_STRING([--enable-groestl-algo],
+  [select groestl pow (disabled by default)])],
+  [groestl_algo=$enableval],
+  [groestl_algo=no])
+
+AC_ARG_ENABLE([axiom-hash-algo],
+  [AS_HELP_STRING([--enable-axiom-algo],
+  [select axiom pow (disabled by default)])],
+  [axiom_algo=$enableval],
+  [axiom_algo=no])
+
+AC_ARG_ENABLE([interblochain-protocol],
+  [AS_HELP_STRING([--disable-ibtp],
+  [disallow interblockhain communication (enabled by default)])],
+  [enable_ibtp=$enableval],
+  [enable_ibtp=yes])
+
+AC_ARG_ENABLE([secure-messaging],
+  [AS_HELP_STRING([--disable-smsg],
+  [disallow secure messaging (enabled by default)])],
+  [enable_smsg=$enableval],
+  [enable_smsg=yes])
+
 AC_ARG_ENABLE([wallet],
   [AS_HELP_STRING([--disable-wallet],
   [disable wallet (enabled by default)])],
@@ -1451,6 +1487,12 @@ AM_CONDITIONAL([TARGET_WINDOWS], [test x$TARGET_OS = xwindows])
 AM_CONDITIONAL([ENABLE_WALLET],[test x$enable_wallet = xyes])
 AM_CONDITIONAL([ENABLE_TESTS],[test x$BUILD_TEST = xyes])
 AM_CONDITIONAL([ENABLE_FUZZ],[test x$enable_fuzz = xyes])
+AM_CONDITIONAL([ENABLE_SECURE_MESSAGING],[test x$enable_smsg = xyes])
+AM_CONDITIONAL([ENABLE_IBTP],[test x$enable_ibtp = xyes])
+AM_CONDITIONAL([ENABLE_MOMENTUM_HASH_ALGO],[test x$momentum_algo = xyes])
+AM_CONDITIONAL([ENABLE_MEM_HASH_ALGO],[test x$axiom_algo = xyes])
+AM_CONDITIONAL([ENABLE_GROESTL_HASH_ALGO],[test x$groestl_algo = xyes])
+AM_CONDITIONAL([ENABLE_SHA_HASH_ALGO],[test x$sha_algo = xyes])
 AM_CONDITIONAL([ENABLE_QT],[test x$cryptotalkcoin_enable_qt = xyes])
 AM_CONDITIONAL([ENABLE_QT_TESTS],[test x$BUILD_TEST_QT = xyes])
 AM_CONDITIONAL([ENABLE_BIP70],[test x$enable_bip70 = xyes])
@@ -1587,6 +1629,13 @@ esac
 echo
 echo "Options used to compile and link:"
 echo "  with wallet   = $enable_wallet"
+echo "  with secure-messaging   = $enable_smsg"
+echo "  with ibtp   = $enable_ibtp"
+echo "  allow genesis spend   = $spend_genesis"
+echo "  momentum hash algorithm    = $momentum_algo"
+echo "  axiom hash algorithm   = $axiom_algo"
+echo "  sha256 hash algorithm   = $sha_algo"
+echo "  groestl hash algorithm   = $groestl_algo"
 echo "  with gui / qt = $cryptotalkcoin_enable_qt"
 if test x$cryptotalkcoin_enable_qt != xno; then
     echo "    with bip70  = $enable_bip70"

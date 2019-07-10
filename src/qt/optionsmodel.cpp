@@ -471,6 +471,12 @@ void OptionsModel::setDisplayUnit(const QVariant &value)
     }
 }
 
+bool OptionsModel::getEnableMessageSendConf()
+{
+    //return fEnableMessageSendConf;
+    return true;
+}
+
 bool OptionsModel::getProxySettings(QNetworkProxy& proxy) const
 {
     // Directly query current base proxy, because

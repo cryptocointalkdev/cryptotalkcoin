@@ -20,6 +20,7 @@
 #include <rpc/protocol.h>
 #include <rpc/server.h>
 #include <shutdown.h>
+#include <smessage/smessage.h>
 #include <sync.h>
 #include <threadsafety.h>
 #include <timedata.h>
@@ -90,6 +91,18 @@ class LockImpl : public Chain::Lock, public UniqueLock<CCriticalSection>
         CBlockIndex* block = ::ChainActive()[height];
         return block && ((block->nStatus & BLOCK_HAVE_DATA) != 0) && block->nTx > 0;
     }
+#ifdef ENABLE_SECURE_MESSAGING
+    bool smsgStart(){
+        SecureMsgStart(true, true);
+        return true;
+    }
+    void secureMsgWalletUnlocked(){
+		SecureMsgWalletUnlocked();
+	}
+    void secureMsgWalletKeyChanged(std::string sAddress, std::string sLabel, ChangeType mode){
+		SecureMsgWalletKeyChanged(sAddress, sLabel, mode);
+	}
+#endif
     Optional<int> findFirstBlockWithTimeAndHeight(int64_t time, int height, uint256* hash) override
     {
         LockAssertion lock(::cs_main);

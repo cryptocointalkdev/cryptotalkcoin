@@ -55,6 +55,7 @@ public:
         DatabaseCache,          // int
         SpendZeroConfChange,    // bool
         Listen,                 // bool
+		EnableMessageSendConf, // bool
         OptionIDRowCount,
     };
 
@@ -76,7 +77,9 @@ public:
     bool getProxySettings(QNetworkProxy& proxy) const;
     bool getCoinControlFeatures() const { return fCoinControlFeatures; }
     const QString& getOverriddenByCommandLine() { return strOverriddenByCommandLine; }
-
+#ifdef ENABLE_SECURE_MESSAGING
+	bool getEnableMessageSendConf();
+#endif
     /* Restart flag helper */
     void setRestartRequired(bool fRequired);
     bool isRestartRequired() const;
@@ -95,7 +98,9 @@ private:
     bool fCoinControlFeatures;
     /* settings that were overridden by command-line */
     QString strOverriddenByCommandLine;
-
+#ifdef ENABLE_SECURE_MESSAGING
+	bool fEnableMessageSendConf;
+#endif
     // Add option to list of GUI options overridden through command line/config file
     void addOverriddenOption(const std::string &option);
 
@@ -105,6 +110,9 @@ Q_SIGNALS:
     void displayUnitChanged(int unit);
     void coinControlFeaturesChanged(bool);
     void hideTrayIconChanged(bool);
+#ifdef ENABLE_SECURE_MESSAGING
+    void enableMessageSendConfChanged(bool);
+#endif
 };
 
 #endif // CRYPTOTALKCOIN_QT_OPTIONSMODEL_H

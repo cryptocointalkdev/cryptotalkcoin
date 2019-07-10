@@ -59,9 +59,10 @@ IsMineResult IsMineInner(const CWallet& keystore, const CScript& scriptPubKey, I
     IsMineResult ret = IsMineResult::NO;
 
     std::vector<valtype> vSolutions;
-    txnouttype whichType = Solver(scriptPubKey, vSolutions);
+    txnouttype whichType;
 
     CKeyID keyID;
+    if(Solver(scriptPubKey, whichType, vSolutions))
     switch (whichType)
     {
     case TX_NONSTANDARD:

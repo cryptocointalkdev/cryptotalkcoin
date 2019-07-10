@@ -41,6 +41,19 @@ const char *SENDCMPCT="sendcmpct";
 const char *CMPCTBLOCK="cmpctblock";
 const char *GETBLOCKTXN="getblocktxn";
 const char *BLOCKTXN="blocktxn";
+#ifdef ENABLE_SECURE_MESSAGING
+
+const char *SMSGIGNORE = "smsgIgnore";
+const char *SMSGPING = "smsgPing";
+const char *SMSGPONG = "smsgPong";
+const char *SMSGDISABLED = "smsgDisabled";
+const char *SMSGSHOW = "smsgShow";
+const char *SMSGMATCH = "smsgMatch";
+const char *SMSGHAVE = "smsgHave";
+const char *SMSGWANT = "smsgWant";
+const char *SMSGMSG = "smsgMsg";
+const char *SMSGINV = "smsgInv";
+#endif
 } // namespace NetMsgType
 
 /** All known message types. Keep this in the same order as the list of
@@ -73,6 +86,18 @@ const static std::string allNetMessageTypes[] = {
     NetMsgType::CMPCTBLOCK,
     NetMsgType::GETBLOCKTXN,
     NetMsgType::BLOCKTXN,
+#ifdef ENABLE_SECURE_MESSAGING
+    NetMsgType::SMSGIGNORE,
+    NetMsgType::SMSGPING,
+    NetMsgType::SMSGPONG,
+    NetMsgType::SMSGDISABLED,
+    NetMsgType::SMSGSHOW,
+    NetMsgType::SMSGMATCH,
+    NetMsgType::SMSGHAVE,
+    NetMsgType::SMSGWANT,
+    NetMsgType::SMSGMSG,
+    NetMsgType::SMSGINV,
+#endif
 };
 const static std::vector<std::string> allNetMessageTypesVec(allNetMessageTypes, allNetMessageTypes+ARRAYLEN(allNetMessageTypes));
 

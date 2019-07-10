@@ -488,6 +488,12 @@ void WalletModel::UnlockContext::CopyFrom(UnlockContext&& rhs)
     *this = rhs;
     rhs.relock = false;
 }
+#ifdef ENABLE_SECURE_MESSAGING
+bool WalletModel::getPubKey(const CKeyID &address, CPubKey& vchPubKeyOut) const
+{
+    return m_wallet->getPubKey(address, vchPubKeyOut);
+}
+#endif
 
 void WalletModel::loadReceiveRequests(std::vector<std::string>& vReceiveRequests)
 {

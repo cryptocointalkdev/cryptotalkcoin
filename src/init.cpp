@@ -41,6 +41,7 @@
 #include <script/sigcache.h>
 #include <scheduler.h>
 #include <shutdown.h>
+#include <smessage/smessage.h>
 #include <util/threadnames.h>
 #include <timedata.h>
 #include <txdb.h>
@@ -51,6 +52,9 @@
 #include <util/moneystr.h>
 #include <util/validation.h>
 #include <validationinterface.h>
+#ifdef ENABLE_WALLET
+#include <wallet/wallet.h>
+#endif
 #include <walletinitinterface.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -207,6 +211,9 @@ void Shutdown(InitInterfaces& interfaces)
     /// module was initialized.
     util::ThreadRename("shutoff");
     mempool.AddTransactionsUpdated(1);
+#ifdef ENABLE_SECURE_MESSAGING
+    SecureMsgStop();
+#endif
 
     StopHTTPRPC();
     StopREST();
@@ -1826,6 +1833,10 @@ bool AppInitMain(InitInterfaces& interfaces)
     scheduler.scheduleEvery([]{
         g_banman->DumpBanlist();
     }, DUMP_BANS_INTERVAL * 1000);
+
+#ifdef ENABLE_SECURE_MESSAGING
+    SecureMsgStart(false, true);
+#endif
 
     return true;
 }

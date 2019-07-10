@@ -105,7 +105,10 @@ protected:
     void dragEnterEvent(QDragEnterEvent *event);
     void dropEvent(QDropEvent *event);
     bool eventFilter(QObject *object, QEvent *event);
-
+	void mousePressEvent(QMouseEvent *event);
+    void mouseMoveEvent(QMouseEvent *event);
+    int m_nMouseClick_X_Coordinate;
+    int m_nMouseClick_Y_Coordinate;
 private:
     interfaces::Node& m_node;
     WalletController* m_wallet_controller{nullptr};
@@ -148,6 +151,12 @@ private:
     QAction* openAction = nullptr;
     QAction* showHelpMessageAction = nullptr;
     QAction* m_open_wallet_action{nullptr};
+
+    QAction* sendMessagesAction  = nullptr;
+    QAction* sendMessagesAnonAction  = nullptr;
+    QAction* messageAction  = nullptr;
+
+    QMenu* m_open_wallet_menu{nullptr};
     QAction* m_close_wallet_action{nullptr};
     QAction* m_wallet_selector_label_action = nullptr;
     QAction* m_wallet_selector_action = nullptr;
@@ -246,6 +255,9 @@ public Q_SLOTS:
 
     /** Show incoming transaction notification for new transactions. */
     void incomingTransaction(const QString& date, int unit, const CAmount& amount, const QString& type, const QString& address, const QString& label, const QString& walletName);
+#ifdef ENABLE_SECURE_MESSAGING
+	void incomingMessage(const QString& sent_datetime, QString from_address, QString to_address, QString message, int type);
+#endif
 #endif // ENABLE_WALLET
 
 private:
@@ -263,7 +275,12 @@ public Q_SLOTS:
     void gotoReceiveCoinsPage();
     /** Switch to send coins page */
     void gotoSendCoinsPage(QString addr = "");
-
+#ifdef ENABLE_SECURE_MESSAGING
+    void gotoSendMessagesPage();
+    /** Switch to send anonymous messages page */
+    /** Switch to view messages page */
+    void gotoMessagesPage();
+#endif
     /** Show Sign/Verify Message dialog and switch to sign message tab */
     void gotoSignMessageTab(QString addr = "");
     /** Show Sign/Verify Message dialog and switch to verify message tab */

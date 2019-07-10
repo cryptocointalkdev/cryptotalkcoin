@@ -238,6 +238,19 @@ extern const char *GETBLOCKTXN;
  * @since protocol version 70014 as described by BIP 152
  */
 extern const char *BLOCKTXN;
+#ifdef ENABLE_SECURE_MESSAGING
+
+extern const char *SMSGIGNORE;
+extern const char *SMSGPING;
+extern const char *SMSGPONG;
+extern const char *SMSGDISABLED;
+extern const char *SMSGSHOW;
+extern const char *SMSGMATCH;
+extern const char *SMSGHAVE;
+extern const char *SMSGWANT;
+extern const char *SMSGMSG;
+extern const char *SMSGINV;
+#endif
 };
 
 /* Get a vector of all valid message types (see above) */

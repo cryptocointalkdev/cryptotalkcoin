@@ -110,7 +110,7 @@ void static MineNewGenesisBlock(const Consensus::Params& consensus,CBlock &genes
         arith_uint256 thash = UintToArith256(genesis.GetHash());
 #endif
 
-		LogPrintf("teHash %s\n", thash.ToString().c_str());
+		LogPrintf("test Hash %s\n", thash.ToString().c_str());
         std::cout << "testHash = " << thash.ToString().c_str() << "\n";
 		LogPrintf("Hash Target %s\n", hashTarget.ToString().c_str());
         std::cout << "Hash Target = " << hashTarget.ToString().c_str() << "\n";
@@ -167,7 +167,7 @@ public:
         consensus.powLimit = uint256S("00000fffffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
 #endif
         consensus.nPowTargetTimespan = 60; // two weeks
-        consensus.nPowTargetSpacing =  60;
+        consensus.nPowTargetSpacing = 60;
         consensus.fPowAllowMinDifficultyBlocks = false;
         consensus.fPowNoRetargeting = false;
         consensus.nRuleChangeActivationThreshold = 1916; // 95% of 2016
@@ -206,9 +206,9 @@ public:
         m_assumed_blockchain_size = 0;
         m_assumed_chain_state_size = 0;
 #ifdef ENABLE_MOMENTUM_HASH_ALGO
-        genesis = CreateGenesisBlock(1562065759, 10, 45045031, 59845590 ,0x201fffff, 1, 5 * COIN);
+        genesis = CreateGenesisBlock(1562734642, 13, 14973817, 15466299, 0x201fffff, 1, 5 * COIN);
 #else
-        genesis = CreateGenesisBlock(1561928393, 221227,0x1e0fffff, 1, 5 * COIN);
+        genesis = CreateGenesisBlock(1562734642, 221227,0x1e0fffff, 1, 5 * COIN);
 #endif
         consensus.hashGenesisBlock = genesis.GetHash();
         
@@ -218,7 +218,7 @@ public:
         //    minerThreads->create_thread(boost::bind(&MineNewGenesisBlock,consensus,genesis));
         //MilliSleep(20000000);
         //MineNewGenesisBlock(consensus,genesis);
-        assert(consensus.hashGenesisBlock == uint256S("0x09aa1c27f555e9cfcca36e8286dd0a8dec11788fb6227a3ea5fc5a63b6212831"));
+        assert(consensus.hashGenesisBlock == uint256S("0x01e3261a8c1267086ddcfbb36a969f0382b446998b99c5f6f52279702dd7a8d8"));
         assert(genesis.hashMerkleRoot == uint256S("0x202b7ffe141c1d8b99e1b76845a24d1933be562c32e56663768cf4c161f772e4"));
 
         // Note that of those which support the service bits prefix, most only support a subset of

@@ -10,6 +10,7 @@
 #include <arith_uint256.h>
 #include <blockencodings.h>
 #include <chainparams.h>
+#include <crosschain/interblockchain.h>
 #include <consensus/validation.h>
 #include <hash.h>
 #include <validation.h>
@@ -23,6 +24,7 @@
 #include <random.h>
 #include <reverse_iterator.h>
 #include <scheduler.h>
+#include <smessage/smessage.h>
 #include <tinyformat.h>
 #include <txmempool.h>
 #include <util/system.h>
@@ -93,8 +95,7 @@ std::map<uint256, COrphanTx> mapOrphanTransactions GUARDED_BY(g_cs_orphans);
 
 void EraseOrphansFor(NodeId peer);
 
-/** Increase a node's misbehavior score. */
-void Misbehaving(NodeId nodeid, int howmuch, const std::string& message="") EXCLUSIVE_LOCKS_REQUIRED(cs_main);
+
 
 /** Average delay between local address broadcasts in seconds. */
 static constexpr unsigned int AVG_LOCAL_ADDRESS_BROADCAST_INTERVAL = 24 * 60 * 60;
@@ -2976,6 +2977,9 @@ bool static ProcessMessage(CNode* pfrom, const std::string& strCommand, CDataStr
             LOCK(cs_main);
             mapBlockSource.erase(pblock->GetHash());
         }
+#ifdef ENABLE_SECURE_MESSAGING
+        SecureMsgScanBlock(*pblock);
+#endif
         return true;
     }
 
@@ -3196,6 +3200,14 @@ bool static ProcessMessage(CNode* pfrom, const std::string& strCommand, CDataStr
         }
         return true;
     }
+#ifdef ENABLE_SECURE_MESSAGING
+
+    {
+        // receive messages
+        SecureMsgReceiveData(pfrom, strCommand, vRecv);
+
+    }
+#endif 
 
     // Ignore unknown commands for extensibility
     LogPrint(BCLog::NET, "Unknown command \"%s\" from peer=%d\n", SanitizeString(strCommand), pfrom->GetId());
@@ -3288,11 +3300,27 @@ bool PeerLogicValidation::ProcessMessages(CNode* pfrom, std::atomic<bool>& inter
 
     msg.SetVersion(pfrom->GetRecvVersion());
     // Scan for message start
-    if (memcmp(msg.hdr.pchMessageStart, chainparams.MessageStart(), CMessageHeader::MESSAGE_START_SIZE) != 0) {
-        LogPrint(BCLog::NET, "PROCESSMESSAGE: INVALID MESSAGESTART %s peer=%d\n", SanitizeString(msg.hdr.GetCommand()), pfrom->GetId());
-        pfrom->fDisconnect = true;
-        return false;
-    }
+
+
+        // Scan for message start
+        if (memcmp(msg.hdr.pchMessageStart, chainparams.MessageStart(), msg.hdr.MESSAGE_START_SIZE) != 0) {
+            std::stringstream ss;
+            ss << std::hex << msg.hdr.pchMessageStart;
+            LogPrint(BCLog::NET, "PROCESSMESSAGE: DIFFERENT MESSAGESTART message start is = %s peer=%d message = %s peerversion = %d , peer address= %s \n", ss.str() , pfrom->GetId() , SanitizeString(msg.hdr.GetCommand()), pfrom->nVersion, pfrom->addr.ToString());
+
+            CIbtp ibtp;
+            std::string schain;
+            if (ibtp.IsIbtpChain(reinterpret_cast<const unsigned char*>(msg.hdr.pchMessageStart), schain))
+            {
+                pfrom->sBlockchain = schain;
+                pfrom->fForeignNode = true;
+            }
+            else
+            {
+				pfrom->fDisconnect = true;
+				return false;
+            }
+        }
 
     // Read header
     CMessageHeader& hdr = msg.hdr;
@@ -4051,8 +4079,10 @@ bool PeerLogicValidation::SendMessages(CNode* pto)
 
         if (!vGetData.empty())
             connman->PushMessage(pto, msgMaker.Make(NetMsgType::GETDATA, vGetData));
+#ifdef ENABLE_SECURE_MESSAGING
 
-        //
+        SecureMsgSendData(pto, true); // should be in cs_main?
+#endif        //
         // Message: feefilter
         //
         // We don't want white listed peers to filter txs to us if we have -whitelistforcerelay
